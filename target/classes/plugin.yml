@@ -1,0 +1,9 @@
+name: NoHitDelay
+version: '1.0'
+main: newamazingpvp.nohitdelay.NoHitDelay
+api-version: 1.18
+commands:
+  setdelay:
+    description: Set the no-hit delay value.
+    usage: /setdelay <delay>
+    permission: nohitdelay.setdelay
