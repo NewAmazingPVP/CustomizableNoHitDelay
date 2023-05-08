@@ -41,7 +41,7 @@ public final class NoHitDelay extends JavaPlugin implements Listener {
                 } catch (NumberFormatException e) {
                     player.sendMessage("Invalid delay value. Please enter a number.");
                 }
-            } else if (args.length == 0 && command.getName().equalsIgnoreCase("setdelay")) {
+            } else if (args.length == 0 && command.getName().equalsIgnoreCase("getdelay")) {
                 player.sendMessage("Delay is currently set to: " + ChatColor.GREEN + Delay);
             }
         }
