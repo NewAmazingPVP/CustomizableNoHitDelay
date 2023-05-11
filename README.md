@@ -27,9 +27,10 @@ Check config.yml for more info!
 ```yaml
 # Delay value (Note: Do make sure the delay is at least 2 because setting it below that will make some hits not register")
 delay: 2 # in ticks
+# Default delay in minecraft is 20 ticks
 
 # In game you can use /setdelay command to change the delay that you wish and it will automatically change here
-# You can also use /getdelay to get the current hit delay in tick 
+# You can also use /getdelay to get the current hit delay in ticks
 ```
 
 # License
