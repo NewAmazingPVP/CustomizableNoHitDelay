@@ -1,7 +1,7 @@
 # CustomizableNoHitDelay
 CustomizableNoHitDelay is a plugin for Spigot that improves PVP experience by allowing users to change entity hit invulnerability delay ticks
 
-Spigot Link: …………..
+Spigot Link: https://www.spigotmc.org/resources/customizablenohitdelay.109763/
 
 # Features
 - Compatible with Minecraft versions 1.8 and higher for both Spigot and Bungeecord, including the latest versions and most likely future versions as well.
