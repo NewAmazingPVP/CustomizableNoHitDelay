@@ -63,7 +63,7 @@ public final class NoHitDelay extends JavaPlugin implements Listener {
     }
 
     private void resetNoDamageTicks(LivingEntity entity, long hitDelay) {
-        Bukkit.getScheduler().runTaskLater((Plugin) this, () -> entity.setNoDamageTicks(0), hitDelay);
+        Bukkit.getScheduler().runTaskLater((Plugin) this, () -> entity.setNoDamageTicks((int) hitDelay), 1);
     }
 
     @Override
