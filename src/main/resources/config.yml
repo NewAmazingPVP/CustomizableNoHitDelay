@@ -1,6 +1,17 @@
 # Delay value (Note: Do make sure the delay is at least 2 because setting it below that will make some hits not register")
 delay: 2 # in ticks
-# Default delay in minecraft is 20 ticks
+# Default delay in Minecraft is 20 ticks
 
-# In game you can use /setdelay command to change the delay that you wish and it will automatically change here
-# You can also use /getdelay to get the current hit delay in ticks
+# Mode options:
+# pvp - No hit delay only applies in player versus player combat.
+# evp - No hit delay only applies when entities attack players.
+# pvp-evp - No hit delay applies to both PvP and EvP interactions as long as a player is involved.
+# any - No hit delay applies to any entity interactions.
+# player-only - No hit delay applies when players attack any entity, but entities do not have no hit delay when attacking.
+mode: any
+
+# In-game you can use the following commands:
+# /setdelay <value> - Change the delay value in ticks.
+# /getdelay - Get the current hit delay in ticks.
+# /setmode <mode> - Change the mode ('pvp', 'evp', 'pvp-evp', 'any', 'player-only').
+# /getmode - Get the current mode.

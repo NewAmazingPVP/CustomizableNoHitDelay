@@ -10,3 +10,11 @@ commands:
     description: Get the hit delay value.
     usage: /getdelay
     permission: nohitdelay.getdelay
+  setmode:
+    description: Set the hit delay mode.
+    usage: /setmode <mode>
+    permission: nohitdelay.setmode
+  getmode:
+    description: Get the hit delay mode.
+    usage: /getmode
+    permission: nohitdelay.getmode
