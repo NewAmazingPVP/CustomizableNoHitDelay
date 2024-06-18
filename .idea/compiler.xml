@@ -9,8 +9,5 @@
         <module name="NoHitDelay" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="NoHitDelay" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>

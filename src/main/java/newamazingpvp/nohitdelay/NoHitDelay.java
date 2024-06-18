@@ -27,28 +27,75 @@ public final class NoHitDelay extends JavaPlugin implements Listener {
     @EventHandler
     private void onEntityDamage(EntityDamageByEntityEvent event) {
         long hitDelay = config.getLong("delay");
+        String mode = config.getString("mode");
+        Entity damager = event.getDamager();
         Entity entity = event.getEntity();
-        if (entity instanceof LivingEntity) {
-            LivingEntity livingEntity = (LivingEntity) entity;
-            Bukkit.getScheduler().runTaskLater((Plugin) this, () -> livingEntity.setNoDamageTicks(0), hitDelay);
+
+        if (mode != null) {
+            switch (mode.toLowerCase()) {
+                case "pvp":
+                    if (damager instanceof Player && entity instanceof Player) {
+                        resetNoDamageTicks((LivingEntity) entity, hitDelay);
+                    }
+                    break;
+                case "evp":
+                    if (!(damager instanceof Player) && entity instanceof Player) {
+                        resetNoDamageTicks((LivingEntity) entity, hitDelay);
+                    }
+                    break;
+                case "pvp-evp":
+                    if ((damager instanceof Player && entity instanceof LivingEntity) || (entity instanceof Player && damager instanceof LivingEntity)) {
+                        resetNoDamageTicks((LivingEntity) entity, hitDelay);
+                    }
+                    break;
+                case "any":
+                    if (entity instanceof LivingEntity) {
+                        resetNoDamageTicks((LivingEntity) entity, hitDelay);
+                    }
+                    break;
+                case "player-only":
+                    if (damager instanceof Player && entity instanceof LivingEntity) {
+                        resetNoDamageTicks((LivingEntity) entity, hitDelay);
+                    }
+                    break;
+            }
         }
+    }
+
+    private void resetNoDamageTicks(LivingEntity entity, long hitDelay) {
+        Bukkit.getScheduler().runTaskLater((Plugin) this, () -> entity.setNoDamageTicks(0), hitDelay);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (args.length == 1 && command.getName().equalsIgnoreCase("setdelay")) {
-                try {
-                    long delay = Long.parseLong(args[0]);
-                    config.set("delay", delay);
-                    saveConfig();
-                    player.sendMessage(ChatColor.GREEN + "Delay set to: " + ChatColor.YELLOW + delay + ChatColor.RESET + ". Do make sure the delay is at least 2 because setting it below that will make some hits not register.");
-                } catch (NumberFormatException e) {
-                    player.sendMessage(ChatColor.RED + "Invalid delay value. Please enter a number.");
+            if (command.getName().equalsIgnoreCase("setdelay")) {
+                if (args.length == 1) {
+                    try {
+                        long delay = Long.parseLong(args[0]);
+                        config.set("delay", delay);
+                        saveConfig();
+                        player.sendMessage(ChatColor.GREEN + "Delay set to: " + ChatColor.YELLOW + delay + ChatColor.RESET + ". Do make sure the delay is at least 2 because setting it below that will make some hits not register.");
+                    } catch (NumberFormatException e) {
+                        player.sendMessage(ChatColor.RED + "Invalid delay value. Please enter a number.");
+                    }
                 }
-            } else if (args.length == 0 && command.getName().equalsIgnoreCase("getdelay")) {
+            } else if (command.getName().equalsIgnoreCase("getdelay")) {
                 player.sendMessage(ChatColor.GREEN + "Delay is currently set to: " + ChatColor.YELLOW + config.getLong("delay"));
+            } else if (command.getName().equalsIgnoreCase("setmode")) {
+                if (args.length == 1) {
+                    String mode = args[0].toLowerCase();
+                    if (mode.equals("pvp") || mode.equals("evp") || mode.equals("pvp-evp") || mode.equals("any") || mode.equals("player-only")) {
+                        config.set("mode", mode);
+                        saveConfig();
+                        player.sendMessage(ChatColor.GREEN + "Mode set to: " + ChatColor.YELLOW + mode + ChatColor.RESET + ".");
+                    } else {
+                        player.sendMessage(ChatColor.RED + "Invalid mode value. Please use 'pvp', 'evp', 'pvp-evp', 'any', or 'player-only'.");
+                    }
+                }
+            } else if (command.getName().equalsIgnoreCase("getmode")) {
+                player.sendMessage(ChatColor.GREEN + "Mode is currently set to: " + ChatColor.YELLOW + config.getString("mode"));
             }
         }
         return true;
