@@ -1,4 +1,4 @@
-# Delay value (Note: Do make sure the delay is at least 2 because setting it below that will make some hits not register")
+# Delay value (Note: Do make sure the delay is at least 2 because setting it below that will make some hits not register)
 delay: 2 # in ticks
 # Default delay in Minecraft is 20 ticks
 
@@ -9,6 +9,9 @@ delay: 2 # in ticks
 # any - No hit delay applies to any entity interactions.
 # player-only - No hit delay applies when players attack any entity, but entities do not have no hit delay when attacking.
 mode: any
+
+# Option to apply hit delay only to entity damage and not to player normal attacks.
+onlyEntityDamage: false
 
 # In-game you can use the following commands:
 # /setdelay <value> - Change the delay value in ticks.
