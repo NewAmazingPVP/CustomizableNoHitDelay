@@ -1,31 +1,11 @@
 name: NoHitDelay
-version: '1.0'
+version: '2.0'
 main: newamazingpvp.nohitdelay.NoHitDelay
 softdepend:
   - MythicMobs
 commands:
-  setdelay:
-    description: Set the hit delay value.
-    usage: /setdelay <delay>
-    permission: nohitdelay.setdelay
-    default: op
-  getdelay:
-    description: Get the hit delay value.
-    usage: /getdelay
-    permission: nohitdelay.getdelay
-    default: op
-  setmode:
-    description: Set the hit delay mode.
-    usage: /setmode <mode>
-    permission: nohitdelay.setmode
-    default: op
-  getmode:
-    description: Get the hit delay mode.
-    usage: /getmode
-    permission: nohitdelay.getmode
-    default: op
-  reloadconfig:
-    description: Reload the plugin configuration.
-    usage: /reloadconfig
-    permission: nohitdelay.reloadconfig
+  nohitdelay:
+    description: Manage hit delay settings.
+    usage: /nohitdelay <setdelay|getdelay|setmode|getmode|reloadconfig> [value]
+    permission: nohitdelay.manage
     default: op
