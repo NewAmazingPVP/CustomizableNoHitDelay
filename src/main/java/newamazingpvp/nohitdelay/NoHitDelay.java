@@ -1,9 +1,11 @@
 package newamazingpvp.nohitdelay;
 
+import io.lumine.mythic.api.mobs.GenericCaster;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -14,12 +16,11 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class NoHitDelay extends JavaPlugin implements Listener {
+public final class NoHitDelay extends JavaPlugin implements Listener, TabCompleter {
     public FileConfiguration config;
 
     @Override
@@ -38,13 +39,13 @@ public final class NoHitDelay extends JavaPlugin implements Listener {
     private void onEntityDamage(EntityDamageByEntityEvent event) {
         long hitDelay = config.getLong("delay");
         String mode = config.getString("mode");
-        boolean onlyEntityDamage = config.getBoolean("onlyEntityDamage");
+        boolean onlyMythicMobDamageHitDelay = config.getBoolean("only-Mythicmob-damage-hit-delay");
 
         Entity damager = event.getDamager();
         Entity entity = event.getEntity();
 
-        if (onlyEntityDamage) {
-            if (!(damager instanceof Player)) {
+        if (onlyMythicMobDamageHitDelay) {
+            if (damager instanceof GenericCaster && ((GenericCaster) damager).isUsingDamageSkill()) {
                 resetNoDamageTicks((LivingEntity) entity, hitDelay);
             }
             return;
@@ -115,6 +116,10 @@ public final class NoHitDelay extends JavaPlugin implements Listener {
                 }
             } else if (command.getName().equalsIgnoreCase("getmode")) {
                 player.sendMessage(ChatColor.GREEN + "Mode is currently set to: " + ChatColor.YELLOW + config.getString("mode"));
+            } else if (command.getName().equalsIgnoreCase("reloadconfig")) {
+                reloadConfig();
+                config = getConfig();
+                player.sendMessage(ChatColor.GREEN + "Configuration reloaded.");
             }
         }
         return true;
