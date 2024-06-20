@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 
 public final class NoHitDelay extends JavaPlugin implements Listener, TabCompleter {
     public FileConfiguration config;
-    private Logger log;
-    private ConcurrentMap<Entity, Long> damageTimestamps;
 
     @Override
     public void onEnable() {
@@ -38,7 +36,6 @@ public final class NoHitDelay extends JavaPlugin implements Listener, TabComplet
         config = getConfig();
         getCommand("nohitdelay").setExecutor(this);
         getCommand("nohitdelay").setTabCompleter(this);
-        damageTimestamps = new ConcurrentHashMap<>();
     }
 
     @EventHandler
@@ -102,9 +99,12 @@ public final class NoHitDelay extends JavaPlugin implements Listener, TabComplet
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
+            String prefix = ChatColor.translateAlternateColorCodes('&', config.getString("messages.prefix", "&f[NoHitDelay] "));
+            boolean usePrefix = config.getBoolean("messages.use-prefix", true);
+
             if (command.getName().equalsIgnoreCase("nohitdelay")) {
                 if (args.length == 0) {
-                    player.sendMessage(ChatColor.RED + "Usage: /nohitdelay <setdelay|getdelay|setmode|getmode|reloadconfig> [value]");
+                    sendCommandList(player);
                     return true;
                 }
                 switch (args[0].toLowerCase()) {
@@ -114,46 +114,64 @@ public final class NoHitDelay extends JavaPlugin implements Listener, TabComplet
                                 long delay = Long.parseLong(args[1]);
                                 config.set("delay", delay);
                                 saveConfig();
-                                player.sendMessage(ChatColor.GREEN + "Delay set to: " + ChatColor.YELLOW + delay + ChatColor.RESET + ". Do make sure the delay is at least 2 because setting it below that will make some hits not register.");
+                                player.sendMessage(formatMessage(usePrefix, prefix, config.getString("messages.delay-set", "&aDelay set to: &e%value%&a."), delay));
                             } catch (NumberFormatException e) {
-                                player.sendMessage(ChatColor.RED + "Invalid delay value. Please enter a number.");
+                                player.sendMessage(formatMessage(usePrefix, prefix, config.getString("messages.invalid-delay", "&cInvalid delay value. Please enter a number.")));
                             }
                         } else {
-                            player.sendMessage(ChatColor.RED + "Usage: /nohitdelay setdelay <delay>");
+                            player.sendMessage(formatMessage(usePrefix, prefix, config.getString("messages.usage-setdelay", "&cUsage: /nohitdelay setdelay <delay>")));
                         }
                         break;
                     case "getdelay":
-                        player.sendMessage(ChatColor.GREEN + "Delay is currently set to: " + ChatColor.YELLOW + config.getLong("delay"));
+                        player.sendMessage(formatMessage(usePrefix, prefix, config.getString("messages.current-delay", "&aDelay is currently set to: &e%value%"), config.getLong("delay")));
                         break;
                     case "setmode":
                         if (args.length == 2) {
                             String mode = args[1].toLowerCase();
-                            if (mode.equals("pvp") || mode.equals("evp") || mode.equals("pvp-evp") || mode.equals("any") || mode.equals("player-only")) {
+                            if (Arrays.asList("pvp", "evp", "pvp-evp", "any", "player-only").contains(mode)) {
                                 config.set("mode", mode);
                                 saveConfig();
-                                player.sendMessage(ChatColor.GREEN + "Mode set to: " + ChatColor.YELLOW + mode + ChatColor.RESET + ".");
+                                player.sendMessage(formatMessage(usePrefix, prefix, config.getString("messages.mode-set", "&aMode set to: &e%value%&a."), mode));
                             } else {
-                                player.sendMessage(ChatColor.RED + "Invalid mode value. Please use 'pvp', 'evp', 'pvp-evp', 'any', or 'player-only'.");
+                                player.sendMessage(formatMessage(usePrefix, prefix, config.getString("messages.invalid-mode", "&cInvalid mode value. Please use 'pvp', 'evp', 'pvp-evp', 'any', or 'player-only'.")));
                             }
                         } else {
-                            player.sendMessage(ChatColor.RED + "Usage: /nohitdelay setmode <mode>");
+                            player.sendMessage(formatMessage(usePrefix, prefix, config.getString("messages.usage-setmode", "&cUsage: /nohitdelay setmode <mode>")));
                         }
                         break;
                     case "getmode":
-                        player.sendMessage(ChatColor.GREEN + "Mode is currently set to: " + ChatColor.YELLOW + config.getString("mode"));
+                        player.sendMessage(formatMessage(usePrefix, prefix, config.getString("messages.current-mode", "&aMode is currently set to: &e%value%"), config.getString("mode")));
                         break;
                     case "reloadconfig":
                         reloadConfig();
                         config = getConfig();
-                        player.sendMessage(ChatColor.GREEN + "Configuration reloaded.");
+                        player.sendMessage(formatMessage(usePrefix, prefix, config.getString("messages.config-reloaded", "&aConfiguration reloaded.")));
                         break;
                     default:
-                        player.sendMessage(ChatColor.RED + "Usage: /nohitdelay <setdelay|getdelay|setmode|getmode|reloadconfig> [value]");
+                        sendCommandList(player);
                         break;
                 }
             }
         }
         return true;
+    }
+
+    private void sendCommandList(Player player) {
+        List<String> commandList = config.getStringList("messages.command-list");
+        for (String line : commandList) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', line));
+        }
+    }
+
+    private String formatMessage(boolean usePrefix, String prefix, String message) {
+        return formatMessage(usePrefix, prefix, message, null);
+    }
+
+    private String formatMessage(boolean usePrefix, String prefix, String message, Object value) {
+        if (value != null) {
+            message = message.replace("%value%", value.toString());
+        }
+        return (usePrefix ? prefix : "") + ChatColor.translateAlternateColorCodes('&', message);
     }
 
     @Override
