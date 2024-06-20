@@ -13,9 +13,23 @@ mode: any
 # Option to apply hit delay only to damage caused by MythicMobs skills and not to normal attacks.
 only-Mythicmob-damage-hit-delay: false
 
-# In-game you can use the following commands:
-# /setdelay <value> - Change the delay value in ticks.
-# /getdelay - Get the current hit delay in ticks.
-# /setmode <mode> - Change the mode ('pvp', 'evp', 'pvp-evp', 'any', 'player-only').
-# /getmode - Get the current mode.
-# /reloadconfig - Reload the plugin configuration.
+messages:
+  prefix: "&f[NoHitDelay] "
+  use-prefix: true
+  delay-set: "&aDelay set to: &e%value%&a. Do make sure the delay is at least 2 because setting it below that will make some hits not register."
+  invalid-delay: "&cInvalid delay value. Please enter a number."
+  usage-setdelay: "&cUsage: /nohitdelay setdelay <delay>"
+  current-delay: "&aDelay is currently set to: &e%value%"
+  mode-set: "&aMode set to: &e%value%&a."
+  invalid-mode: "&cInvalid mode value. Please use 'pvp', 'evp', 'pvp-evp', 'any', or 'player-only'."
+  usage-setmode: "&cUsage: /nohitdelay setmode <mode>"
+  current-mode: "&aMode is currently set to: &e%value%"
+  config-reloaded: "&aConfiguration reloaded."
+  command-list:
+    - "&fnohitdelay command list"
+    - "&f"
+    - "&f/nohitdelay setdelay <amount> &7(~~~)"
+    - "&f/nohitdelay getdelay &7(~~~)"
+    - "&f/nohitdelay setmode <mode> &7(~~~)"
+    - "&f/nohitdelay getmode &7(~~~)"
+    - "&f/nohitdelay reloadconfig &7(~~~)"
