@@ -2,6 +2,7 @@ package newamazingpvp.nohitdelay;
 
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.bukkit.events.MythicDamageEvent;
+import io.lumine.mythic.core.players.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -9,6 +10,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
 public final class NoHitDelay extends JavaPlugin implements Listener, TabCompleter {
     public FileConfiguration config;
     private static final Pattern HEX_REGEX = Pattern.compile("&#([0-9A-F])([0-9A-F])([0-9A-F])([0-9A-F])([0-9A-F])([0-9A-F])", Pattern.CASE_INSENSITIVE);
+    private long duration;
 
     @Override
     public void onEnable() {
@@ -38,14 +41,16 @@ public final class NoHitDelay extends JavaPlugin implements Listener, TabComplet
         config = getConfig();
         getCommand("nohitdelay").setExecutor(this);
         getCommand("nohitdelay").setTabCompleter(this);
+        duration = 0;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onMythicDamage(MythicDamageEvent event){
         long hitDelay = config.getLong("delay");
         boolean onlyMythicMobDamageHitDelay = config.getBoolean("only-Mythicmob-damage-hit-delay");
         if (onlyMythicMobDamageHitDelay) {
             resetNoDamageTicks((LivingEntity) event.getTarget().getBukkitEntity(), hitDelay);
+            duration = System.currentTimeMillis();
         }
     }
 
@@ -58,7 +63,29 @@ public final class NoHitDelay extends JavaPlugin implements Listener, TabComplet
         Entity damager = event.getDamager();
         Entity entity = event.getEntity();
 
+
+
+        if (!(entity instanceof LivingEntity)) {
+            damager.sendMessage("Entity is not a LivingEntity: " + entity.getType());
+            return;
+        }
+
+        LivingEntity livingEntity = (LivingEntity) entity;
+
         if (onlyMythicMobDamageHitDelay) {
+            if(duration == 0) return;
+            if(System.currentTimeMillis() - duration > 50){
+                if (livingEntity.getNoDamageTicks() < hitDelay - 20 && livingEntity.getNoDamageTicks() != 0) {
+                    try {
+                        damager.sendMessage("Applying damage to " + livingEntity.getType() + " by " + damager.getType());
+                        //livingEntity.damage(event.getFinalDamage(), damager);
+                        Damageable d = (Damageable) entity;
+                        d.damage(event.getFinalDamage());
+                    } catch (Exception e) {
+                        damager.sendMessage("Error while damaging entity: " + e.getMessage());
+                    }
+                }
+            }
             return;
         }
 
@@ -182,10 +209,10 @@ public final class NoHitDelay extends JavaPlugin implements Listener, TabComplet
     private String formatMessage(boolean usePrefix, String prefix, String message, Object value) {
         if (value != null) {
             message = message.replace("%value%", value.toString());
-            message = replace(message);
-            message = message.replace("&", "§");
-            message = ChatColor.translateAlternateColorCodes('§', message);
         }
+        message = replace(message);
+        message = message.replace("&", "§");
+        message = ChatColor.translateAlternateColorCodes('§', message);
         return (usePrefix ? prefix : "") + message;
     }
 

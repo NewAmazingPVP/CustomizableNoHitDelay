@@ -9,3 +9,4 @@ commands:
     usage: /nohitdelay <setdelay|getdelay|setmode|getmode|reloadconfig> [value]
     permission: nohitdelay.manage
     default: op
+
