@@ -24,10 +24,12 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public final class NoHitDelay extends JavaPlugin implements Listener, TabCompleter {
     public FileConfiguration config;
+    private static final Pattern HEX_REGEX = Pattern.compile("&#([0-9A-F])([0-9A-F])([0-9A-F])([0-9A-F])([0-9A-F])([0-9A-F])", Pattern.CASE_INSENSITIVE);
 
     @Override
     public void onEnable() {
@@ -95,11 +97,18 @@ public final class NoHitDelay extends JavaPlugin implements Listener, TabComplet
         Bukkit.getScheduler().runTaskLater(this, () -> entity.setNoDamageTicks((int) hitDelay), 1);
     }
 
+    public String replace(String s) {
+        return HEX_REGEX.matcher(s).replaceAll("&x&$1&$2&$3&$4&$5&$6");
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String prefix = ChatColor.translateAlternateColorCodes('&', config.getString("messages.prefix", "&f[NoHitDelay] "));
+            String prefix = config.getString("messages.prefix", "&f[NoHitDelay] ");
+            prefix = replace(prefix);
+            prefix = prefix.replace("&", "§");
+            prefix = ChatColor.translateAlternateColorCodes('§', prefix);
             boolean usePrefix = config.getBoolean("messages.use-prefix", true);
 
             if (command.getName().equalsIgnoreCase("nohitdelay")) {
@@ -159,7 +168,10 @@ public final class NoHitDelay extends JavaPlugin implements Listener, TabComplet
     private void sendCommandList(Player player) {
         List<String> commandList = config.getStringList("messages.command-list");
         for (String line : commandList) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', line));
+            line = replace(line);
+            line = line.replace("&", "§");
+            line = ChatColor.translateAlternateColorCodes('§', line);
+            player.sendMessage(line);
         }
     }
 
@@ -170,8 +182,11 @@ public final class NoHitDelay extends JavaPlugin implements Listener, TabComplet
     private String formatMessage(boolean usePrefix, String prefix, String message, Object value) {
         if (value != null) {
             message = message.replace("%value%", value.toString());
+            message = replace(message);
+            message = message.replace("&", "§");
+            message = ChatColor.translateAlternateColorCodes('§', message);
         }
-        return (usePrefix ? prefix : "") + ChatColor.translateAlternateColorCodes('&', message);
+        return (usePrefix ? prefix : "") + message;
     }
 
     @Override
