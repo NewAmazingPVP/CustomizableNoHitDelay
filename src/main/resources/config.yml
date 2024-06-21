@@ -16,7 +16,7 @@ only-Mythicmob-damage-hit-delay: false
 messages:
   prefix: "&f[NoHitDelay] "
   use-prefix: true
-  delay-set: "&aDelay set to: &e%value%&a. Do make sure the delay is at least 2 because setting it below that will make some hits not register."
+  delay-set: "&aDelay set to: &e%value%&a."
   invalid-delay: "&cInvalid delay value. Please enter a number."
   usage-setdelay: "&cUsage: /nohitdelay setdelay <delay>"
   current-delay: "&aDelay is currently set to: &e%value%"
@@ -26,7 +26,7 @@ messages:
   current-mode: "&aMode is currently set to: &e%value%"
   config-reloaded: "&aConfiguration reloaded."
   command-list:
-    - "&fnohitdelay command list"
+    - "%prefix% command list"
     - "&f"
     - "&f/nohitdelay setdelay <amount> &7(~~~)"
     - "&f/nohitdelay getdelay &7(~~~)"

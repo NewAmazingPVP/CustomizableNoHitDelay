@@ -63,8 +63,6 @@ public final class NoHitDelay extends JavaPlugin implements Listener, TabComplet
         Entity damager = event.getDamager();
         Entity entity = event.getEntity();
 
-
-
         if (!(entity instanceof LivingEntity)) {
             damager.sendMessage("Entity is not a LivingEntity: " + entity.getType());
             return;
@@ -196,6 +194,7 @@ public final class NoHitDelay extends JavaPlugin implements Listener, TabComplet
         List<String> commandList = config.getStringList("messages.command-list");
         for (String line : commandList) {
             line = replace(line);
+            line = line.replace("%prefix%", config.getString("messages.prefix", "&f[NoHitDelay] "));
             line = line.replace("&", "§");
             line = ChatColor.translateAlternateColorCodes('§', line);
             player.sendMessage(line);
@@ -210,6 +209,7 @@ public final class NoHitDelay extends JavaPlugin implements Listener, TabComplet
         if (value != null) {
             message = message.replace("%value%", value.toString());
         }
+        message = message.replace("%prefix%", prefix);
         message = replace(message);
         message = message.replace("&", "§");
         message = ChatColor.translateAlternateColorCodes('§', message);
