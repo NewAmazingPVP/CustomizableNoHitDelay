@@ -19,11 +19,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Logger;
@@ -33,6 +33,9 @@ import java.util.stream.Collectors;
 public final class NoHitDelay extends JavaPlugin implements Listener, TabCompleter {
     public FileConfiguration config;
     private static final Pattern HEX_REGEX = Pattern.compile("&#([0-9A-F])([0-9A-F])([0-9A-F])([0-9A-F])([0-9A-F])([0-9A-F])", Pattern.CASE_INSENSITIVE);
+    private final HashMap<UUID, Long> lastMythicAttackTime = new HashMap<>();
+    private final HashMap<Entity, Long> entityCooldown = new HashMap<>();
+    private final HashMap<Entity, Long> entitySkillCooldown = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -43,17 +46,47 @@ public final class NoHitDelay extends JavaPlugin implements Listener, TabComplet
         getCommand("nohitdelay").setTabCompleter(this);
     }
 
-
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onMythicDamage(MythicDamageEvent event) {
         long hitDelay = config.getLong("delay");
         boolean onlyMythicMobDamageHitDelay = config.getBoolean("only-Mythicmob-damage-hit-delay");
+        LivingEntity target = (LivingEntity) event.getTarget().getBukkitEntity();
+        UUID targetId = target.getUniqueId();
+
+        // Register the time of the mythic attack
+        lastMythicAttackTime.put(targetId, System.currentTimeMillis());
         if (onlyMythicMobDamageHitDelay) {
-            resetNoDamageTicks((LivingEntity) event.getTarget().getBukkitEntity(), hitDelay);
+            event.getCaster().getEntity().getBukkitEntity().sendMessage("Applied 0 ticks of delay to entity with custom manual cooldown");
+            resetNoDamageTicks(target, 0); // Ensure no delay for mythic attacks if setting is enabled
         }
     }
 
     @EventHandler
+    public void onEntityDmg(EntityDamageEvent event) {
+        // Set a cooldown for the entity upon taking damage
+        if(config.getBoolean("only-Mythicmob-damage-hit-delay")) {
+            if (!isEntityOnCooldown(event.getEntity())) {
+                entityCooldown.put(event.getEntity(), System.currentTimeMillis() + 1000); // 1 second cooldown for normal attacks
+            } else {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    public boolean isEntityOnCooldown(Entity e) {
+        return entityCooldown.getOrDefault(e, 0L) - System.currentTimeMillis() > 0;
+    }
+
+    public boolean isEntityOnSkillCooldown(Entity e) {
+        return entitySkillCooldown.getOrDefault(e, 0L) - System.currentTimeMillis() > 0;
+    }
+
+    public boolean recentSkillAttack(Player p) {
+        Long lastMythicAttack = lastMythicAttackTime.get(p.getUniqueId());
+        return lastMythicAttack != null && (System.currentTimeMillis() - lastMythicAttack <= 49);
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onEntityDamage(EntityDamageByEntityEvent event) {
         long hitDelay = config.getLong("delay");
         String mode = config.getString("mode");
@@ -62,11 +95,21 @@ public final class NoHitDelay extends JavaPlugin implements Listener, TabComplet
         Entity damager = event.getDamager();
         Entity entity = event.getEntity();
 
-        if(onlyMythicMobDamageHitDelay){
-            return;
+        if (onlyMythicMobDamageHitDelay && damager instanceof Player) {
+            Player player = (Player) damager;
+
+            if (recentSkillAttack(player) && isEntityOnSkillCooldown(entity)) {
+                player.sendMessage("Recent skill attack and entity is on skill cooldown");
+                event.setCancelled(true); // Cancel the event if the entity is still on skill cooldown
+            } else if (recentSkillAttack(player)) {
+                player.sendMessage("recent skill attack");
+                entitySkillCooldown.put(entity, System.currentTimeMillis() + hitDelay * 50); // Apply skill cooldown
+            } else if (!recentSkillAttack(player) && isEntityOnCooldown(entity)) {
+                player.sendMessage("no recent skill attack and entity is on normal attack cooldown");
+                event.setCancelled(true); // Cancel the event if the entity is on normal cooldown
+            }
         }
 
-        damager.sendMessage(String.valueOf(((LivingEntity)(entity)).getNoDamageTicks()));
         if (mode != null) {
             switch (mode.toLowerCase()) {
                 case "pvp":
