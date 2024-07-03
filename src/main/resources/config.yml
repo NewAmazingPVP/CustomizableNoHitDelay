@@ -10,9 +10,6 @@ delay: 2 # in ticks
 # player-only - No hit delay applies when players attack any entity, but entities do not have no hit delay when attacking.
 mode: any
 
-# Option to apply hit delay only to damage caused by MythicMobs skills and not to normal attacks.
-only-Mythicmob-damage-hit-delay: false
-
 messages:
   prefix: "&f[NoHitDelay] "
   use-prefix: true

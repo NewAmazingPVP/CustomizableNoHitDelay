@@ -1,32 +1,21 @@
 package newamazingpvp.nohitdelay;
 
-import io.lumine.mythic.bukkit.MythicBukkit;
-import io.lumine.mythic.bukkit.events.MythicDamageEvent;
-import io.lumine.mythic.core.mobs.ActiveMob;
-import io.lumine.mythic.core.players.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -45,28 +34,13 @@ public final class NoHitDelay extends JavaPlugin implements Listener, TabComplet
 
 
     @EventHandler
-    public void onMythicDamage(MythicDamageEvent event) {
-        long hitDelay = config.getLong("delay");
-        boolean onlyMythicMobDamageHitDelay = config.getBoolean("only-Mythicmob-damage-hit-delay");
-        if (onlyMythicMobDamageHitDelay) {
-            resetNoDamageTicks((LivingEntity) event.getTarget().getBukkitEntity(), hitDelay);
-        }
-    }
-
-    @EventHandler
     private void onEntityDamage(EntityDamageByEntityEvent event) {
         long hitDelay = config.getLong("delay");
         String mode = config.getString("mode");
-        boolean onlyMythicMobDamageHitDelay = config.getBoolean("only-Mythicmob-damage-hit-delay");
 
         Entity damager = event.getDamager();
         Entity entity = event.getEntity();
 
-        if(onlyMythicMobDamageHitDelay){
-            return;
-        }
-
-        damager.sendMessage(String.valueOf(((LivingEntity)(entity)).getNoDamageTicks()));
         if (mode != null) {
             switch (mode.toLowerCase()) {
                 case "pvp":
