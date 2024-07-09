@@ -4,11 +4,11 @@ CustomizableNoHitDelay is a plugin for Spigot that improves PVP experience by al
 Spigot Link: https://www.spigotmc.org/resources/customizablenohitdelay.109763/
 
 # Features
-- Compatible with Minecraft versions 1.8 and higher for both Spigot and Bungeecord, including the latest versions and most likely future versions as well.
+- Compatible with Minecraft versions 1.8 and higher for both Spigot, including the latest versions and most likely future versions as well.
 
-- /setdelay command allows you to change hit delay ticks from ingame (permission: nohitdelay.setdelay)
+- /nohitdelay setdelay command allows you to change hit delay ticks from ingame (permission: nohitdelay.setdelay)
 
-- /getdelay command to get the current hit delay in ticks (permission: nohitdelay.getdelay)
+- /nohitdelay getdelay command to get the current hit delay in ticks (permission: nohitdelay.getdelay)
 
 - Config.yml that allows you to change hit delay in ticks
 
@@ -25,13 +25,39 @@ Check config.yml for more info!
 
 # Config.yml
 ```yaml
-# Delay value (Note: Do make sure the delay is at least 2 because setting it below that will make some hits not register")
+# Delay value
 delay: 2 # in ticks
-# Default delay in minecraft is 20 ticks
+# Default delay in Minecraft is 20 ticks
 
-# In game you can use /setdelay command to change the delay that you wish and it will automatically change here
-# You can also use /getdelay to get the current hit delay in ticks
+# Mode options:
+# pvp - No hit delay only applies in player versus player combat.
+# evp - No hit delay only applies when entities attack players.
+# pvp-evp - No hit delay applies to both PvP and EvP interactions as long as a player is involved.
+# any - No hit delay applies to any entity interactions.
+# player-only - No hit delay applies when players attack any entity, but entities do not have no hit delay when attacking.
+mode: any
+
+messages:
+  prefix: "&f[NoHitDelay] "
+  use-prefix: true
+  delay-set: "&aDelay set to: &e%value%&a."
+  invalid-delay: "&cInvalid delay value. Please enter a number."
+  usage-setdelay: "&cUsage: /nohitdelay setdelay <delay>"
+  current-delay: "&aDelay is currently set to: &e%value%"
+  mode-set: "&aMode set to: &e%value%&a."
+  invalid-mode: "&cInvalid mode value. Please use 'pvp', 'evp', 'pvp-evp', 'any', or 'player-only'."
+  usage-setmode: "&cUsage: /nohitdelay setmode <mode>"
+  current-mode: "&aMode is currently set to: &e%value%"
+  config-reloaded: "&aConfiguration reloaded."
+  command-list:
+    - "%prefix% command list"
+    - "&f"
+    - "&f/nohitdelay setdelay <amount> &7(~~~)"
+    - "&f/nohitdelay getdelay &7(~~~)"
+    - "&f/nohitdelay setmode <mode> &7(~~~)"
+    - "&f/nohitdelay getmode &7(~~~)"
+    - "&f/nohitdelay reloadconfig &7(~~~)"
 ```
 
 # License
-AutoViaUpdater is released under the MIT License. See the LICENSE file for more information.
+CustomizableNoHitDelay is released under the MIT License. See the LICENSE file for more information.
