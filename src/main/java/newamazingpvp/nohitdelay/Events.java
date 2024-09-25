@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.util.Vector;
 
 public class Events implements Listener {
     private final NoHitDelay plugin;
@@ -57,6 +59,9 @@ public class Events implements Listener {
     }
 
     private void resetNoDamageTicks(LivingEntity entity, long hitDelay) {
+        double multiplier = config.getConfig().getDouble("knockback-multiplier");
+        Vector vel = entity.getVelocity();
+        entity.setVelocity(vel.multiply(multiplier));
         Bukkit.getScheduler().runTaskLater(plugin, () -> entity.setNoDamageTicks((int) hitDelay), 1);
     }
 }
