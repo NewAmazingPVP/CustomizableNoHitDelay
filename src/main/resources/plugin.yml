@@ -1,6 +1,7 @@
 name: NoHitDelay
 version: '1.1'
 main: newamazingpvp.nohitdelay.NoHitDelay
+api-version: 1.13
 commands:
   nohitdelay:
     description: Manage hit delay settings.
