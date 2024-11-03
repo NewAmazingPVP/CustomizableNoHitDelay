@@ -29,6 +29,9 @@ Check config.yml for more info!
 delay: 2 # in ticks
 # Default delay in Minecraft is 20 ticks
 
+# Experimental
+knockback-multiplier: 1.0
+
 # Mode options:
 # pvp - No hit delay only applies in player versus player combat.
 # evp - No hit delay only applies when entities attack players.
