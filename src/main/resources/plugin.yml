@@ -1,5 +1,5 @@
 name: NoHitDelay
-version: '1.1'
+version: '1.2'
 main: newamazingpvp.nohitdelay.NoHitDelay
 api-version: 1.13
 commands:
@@ -8,4 +8,3 @@ commands:
     usage: /nohitdelay <setdelay|getdelay|setmode|getmode|reloadconfig> [value]
     permission: nohitdelay.manage
     default: op
-
