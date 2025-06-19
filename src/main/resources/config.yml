@@ -3,7 +3,7 @@ delay: 2 # in ticks
 # Default delay in Minecraft is 20 ticks
 
 # Experimental
-knockback-multiplier: 1.0
+knockback-multiplier: 1.0 # Set to 1.0 to disable knockback changes
 
 # Mode options:
 # pvp - No hit delay only applies in player versus player combat.

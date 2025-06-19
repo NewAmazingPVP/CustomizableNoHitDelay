@@ -60,7 +60,10 @@ public class Events implements Listener {
 
     private void resetNoDamageTicks(LivingEntity entity, long hitDelay) {
         double multiplier = config.getConfig().getDouble("knockback-multiplier");
-        Bukkit.getScheduler().runTaskLater(plugin, () -> entity.setVelocity(entity.getVelocity().multiply(multiplier)), 1);
+        if (Math.abs(multiplier - 1.0) > 0.0001) {
+            Bukkit.getScheduler().runTaskLater(plugin,
+                    () -> entity.setVelocity(entity.getVelocity().multiply(multiplier)), 1);
+        }
         Bukkit.getScheduler().runTaskLater(plugin, () -> entity.setNoDamageTicks((int) hitDelay), 1);
     }
 }
