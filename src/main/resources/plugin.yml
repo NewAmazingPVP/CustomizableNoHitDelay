@@ -1,10 +1,14 @@
 name: NoHitDelay
-version: '1.2'
+version: '${project.version}'
 main: newamazingpvp.nohitdelay.NoHitDelay
-api-version: 1.13
+folia-supported: true
+description: Customize entity hit invulnerability delay (no-damage ticks)
 commands:
   nohitdelay:
     description: Manage hit delay settings.
     usage: /nohitdelay <setdelay|getdelay|setmode|getmode|reloadconfig> [value]
     permission: nohitdelay.manage
+permissions:
+  nohitdelay.manage:
+    description: Allows managing NoHitDelay settings.
     default: op

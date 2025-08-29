@@ -26,10 +26,7 @@ public class Commands implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String prefix = config.getConfig().getString("messages.prefix", "&f[NoHitDelay] ");
-            prefix = replace(prefix);
-            prefix = prefix.replace("&", "§");
-            prefix = ChatColor.translateAlternateColorCodes('§', prefix);
+            String prefix = colorize(config.getConfig().getString("messages.prefix", "&f[NoHitDelay] "));
             boolean usePrefix = config.getConfig().getBoolean("messages.use-prefix", true);
 
             if (command.getName().equalsIgnoreCase("nohitdelay")) {
@@ -87,12 +84,10 @@ public class Commands implements CommandExecutor, TabCompleter {
 
     private void sendCommandList(Player player) {
         List<String> commandList = config.getConfig().getStringList("messages.command-list");
-        for (String line : commandList) {
-            line = line.replace("%prefix%", config.getConfig().getString("messages.prefix", "&f[NoHitDelay] "));
-            line = replace(line);
-            line = line.replace("&", "§");
-            line = ChatColor.translateAlternateColorCodes('§', line);
-            player.sendMessage(line);
+        String prefix = colorize(config.getConfig().getString("messages.prefix", "&f[NoHitDelay] "));
+        for (String raw : commandList) {
+            String line = raw.replace("%prefix%", prefix);
+            player.sendMessage(colorize(line));
         }
     }
 
@@ -105,14 +100,16 @@ public class Commands implements CommandExecutor, TabCompleter {
             message = message.replace("%value%", value.toString());
         }
         message = message.replace("%prefix%", prefix);
-        message = replace(message);
-        message = message.replace("&", "§");
-        message = ChatColor.translateAlternateColorCodes('§', message);
-        return (usePrefix ? prefix : "") + message;
+        String colored = colorize(message);
+        return (usePrefix ? prefix : "") + colored;
     }
 
     public String replace(String s) {
         return HEX_REGEX.matcher(s).replaceAll("&x&$1&$2&$3&$4&$5&$6");
+    }
+
+    private String colorize(String s) {
+        return ChatColor.translateAlternateColorCodes('&', replace(s));
     }
 
     @Override

@@ -1,29 +1,54 @@
-# CustomizableNoHitDelay
-CustomizableNoHitDelay is a plugin for Spigot that improves PVP experience by allowing users to change entity hit invulnerability delay ticks
+# NoHitDelay
 
-Spigot Link: https://www.spigotmc.org/resources/customizablenohitdelay.109763/
+NoHitDelay is a lightweight Spigot/Paper/Folia plugin that lets you customize the hit invulnerability delay (no-damage
+ticks) for entities, improving PvP/PvE responsiveness.
 
-# Features
-- Compatible with Minecraft versions 1.8 and higher for both Spigot, including the latest versions and most likely future versions as well.
+Spigot page: https://www.spigotmc.org/resources/customizablenohitdelay.109763/
 
-- /nohitdelay setdelay command allows you to change hit delay ticks from ingame (permission: nohitdelay.setdelay)
+**Highlights**
 
-- /nohitdelay getdelay command to get the current hit delay in ticks (permission: nohitdelay.getdelay)
+- Wide compatibility: Spigot/Paper 1.8+ and Folia support.
+- Runtime-safe on Folia via region scheduler; no compile-time Folia dependency.
+- Simple commands and config for delay, modes, and optional knockback multiplier.
+- CI builds on every push; releases on tags.
 
-- Config.yml that allows you to change hit delay in ticks
+## Compatibility
 
-# Planned Features
-- If you have any suggestions or feature requests, please create a new issue in the project's GitHub repository.
+- Servers: Spigot, Paper, Purpur, Folia
+- Versions: 1.8 and newer
+- Folia: Declared `folia-supported: true` and uses region-safe scheduling.
 
-# Installation
-- Download the latest release of the plugin from the releases page.
-- Copy the downloaded .jar file to the plugins directory of your Minecraft server.
-- Start the server.
-- After installation, CustomizableNoHitDelay will automatically change the hit invulnerability period for entities.
+## Installation
 
-Check config.yml for more info!
+- Download the latest JAR from GitHub Releases or Spigot.
+- Drop the JAR into your server's `plugins/` folder.
+- Restart or reload your server.
 
-# Config.yml
+## Commands
+
+- `/nohitdelay` — Shows help.
+- `/nohitdelay setdelay <ticks>` — Set invulnerability ticks.
+- `/nohitdelay getdelay` — Show current delay.
+- `/nohitdelay setmode <mode>` — Set operating mode.
+- `/nohitdelay getmode` — Show current mode.
+- `/nohitdelay reloadconfig` — Reload configuration.
+
+## Permissions
+
+- `nohitdelay.manage` — Access to all subcommands (default: OP).
+
+## Modes
+
+- `pvp` — Player vs Player only.
+- `evp` — Entities vs Player only.
+- `pvp-evp` — Any interaction where a player is involved.
+- `any` — Any entity interactions.
+- `player-only` — Player damages any entity; entities do not gain no-hit delay when damaging.
+
+## Configuration
+
+Default `config.yml`:
+
 ```yaml
 # Delay value
 delay: 2 # in ticks
@@ -62,5 +87,36 @@ messages:
     - "&f/nohitdelay reloadconfig &7(~~~)"
 ```
 
-# License
-CustomizableNoHitDelay is released under the MIT License. See the LICENSE file for more information.
+Notes:
+
+- Hex colors in messages using `&#RRGGBB` are converted where supported (1.16+).
+- On legacy 1.8 servers, only `&` color codes render.
+
+## Building
+
+- Prereqs: JDK 8+ and Maven.
+- Build: `mvn -DskipTests package`
+- Output: `target/NoHitDelay-<version>.jar`
+
+CI:
+
+- GitHub Actions builds on each push and uploads the JAR as an artifact.
+- Tagging `vX.Y.Z` creates a GitHub Release and attaches the built JAR.
+
+## Versioning
+
+This project follows Semantic Versioning:
+
+- MAJOR: incompatible changes (e.g., config format changes, dropped MC version).
+- MINOR: new features, compatible changes.
+- PATCH: bug fixes only.
+
+Current release: `1.3.0`.
+
+## Changelog
+
+See `CHANGELOG.md` for a human-readable list of changes per release.
+
+## License
+
+MIT — see `LICENSE`.

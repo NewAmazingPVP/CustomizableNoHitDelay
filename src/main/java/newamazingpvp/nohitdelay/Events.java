@@ -1,14 +1,11 @@
 package newamazingpvp.nohitdelay;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.util.Vector;
 
 public class Events implements Listener {
     private final NoHitDelay plugin;
@@ -61,9 +58,10 @@ public class Events implements Listener {
     private void resetNoDamageTicks(LivingEntity entity, long hitDelay) {
         double multiplier = config.getConfig().getDouble("knockback-multiplier");
         if (Math.abs(multiplier - 1.0) > 0.0001) {
-            Bukkit.getScheduler().runTaskLater(plugin,
-                    () -> entity.setVelocity(entity.getVelocity().multiply(multiplier)), 1);
+            SchedulerAdapter.runEntityLater(plugin, entity, 1, () ->
+                    entity.setVelocity(entity.getVelocity().multiply(multiplier))
+            );
         }
-        Bukkit.getScheduler().runTaskLater(plugin, () -> entity.setNoDamageTicks((int) hitDelay), 1);
+        SchedulerAdapter.runEntityLater(plugin, entity, 1, () -> entity.setNoDamageTicks((int) Math.max(0L, hitDelay)));
     }
 }
