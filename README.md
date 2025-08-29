@@ -1,49 +1,76 @@
-# NoHitDelay
+<div align="center">
 
-NoHitDelay is a lightweight Spigot/Paper/Folia plugin that lets you customize the hit invulnerability delay (no-damage
-ticks) for entities, improving PvP/PvE responsiveness.
+# **NoHitDelay v1.3.0**
 
-Spigot page: https://www.spigotmc.org/resources/customizablenohitdelay.109763/
+*Customize the no-damage tick window for responsive combat.*
 
-**Highlights**
+[![SpigotMC](https://img.shields.io/badge/SpigotMC-Resource-orange)](https://www.spigotmc.org/resources/customizablenohitdelay.109763/)
+![Platforms](https://img.shields.io/badge/Platforms-Spigot%20%7C%20Paper%20%7C%20Folia-5A67D8)
+![MC](https://img.shields.io/badge/Minecraft-1.8%E2%86%92Latest-2EA043)
+![Java](https://img.shields.io/badge/Java-8%2B-1F6FEB)
+![License](https://img.shields.io/badge/License-MIT-0E8A16)
 
-- Wide compatibility: Spigot/Paper 1.8+ and Folia support.
-- Runtime-safe on Folia via region scheduler; no compile-time Folia dependency.
-- Simple commands and config for delay, modes, and optional knockback multiplier.
-- CI builds on every push; releases on tags.
+</div>
 
-## Compatibility
+> TL;DR
+> Drop in the jar → set `delay` → choose a mode. The plugin adjusts entity invulnerability (no-damage ticks) safely on modern servers and Folia.
 
-- Servers: Spigot, Paper, Purpur, Folia
-- Versions: 1.8 and newer
-- Folia: Declared `folia-supported: true` and uses region-safe scheduling.
+---
+
+## Table of Contents
+
+* [Highlights](#highlights)
+* [Platforms & Requirements](#platforms--requirements)
+* [Installation](#installation)
+* [Quick Start](#quick-start)
+* [Configuration](#configuration)
+* [Commands & Permissions](#commands--permissions)
+* [How It Works](#how-it-works)
+* [Troubleshooting & FAQ](#troubleshooting--faq)
+* [Building from Source](#building-from-source)
+* [Contributing & License](#contributing--license)
+
+---
+
+## Highlights
+
+* Set entity invulnerability ticks (no-damage ticks) to your preference.
+* Five modes: `pvp`, `evp`, `pvp-evp`, `any`, `player-only`.
+* Optional knockback multiplier.
+* Safe on Folia via region scheduling (no cross-thread access).
+* Works back to 1.8; Java 8 compatible.
+
+## Platforms & Requirements
+
+**Server platforms**
+
+* Spigot
+* Paper
+* Folia
+
+**Minecraft:** 1.8 → Latest
+
+**Java:** 8+
+
+> Note: Folia is a separate server platform. This plugin detects and uses Folia's region scheduler when present.
 
 ## Installation
 
-- Download the latest JAR from GitHub Releases or Spigot.
-- Drop the JAR into your server's `plugins/` folder.
-- Restart or reload your server.
+1. Download the latest `.jar` from [Spigot](https://www.spigotmc.org/resources/customizablenohitdelay.109763/) or GitHub Releases.
+2. Place it into your server’s `plugins/` directory.
+3. Start the server to generate `config.yml`.
 
-## Commands
+## Quick Start
 
-- `/nohitdelay` — Shows help.
-- `/nohitdelay setdelay <ticks>` — Set invulnerability ticks.
-- `/nohitdelay getdelay` — Show current delay.
-- `/nohitdelay setmode <mode>` — Set operating mode.
-- `/nohitdelay getmode` — Show current mode.
-- `/nohitdelay reloadconfig` — Reload configuration.
+1. Set your delay (ticks):
 
-## Permissions
+   `/nohitdelay setdelay 2`
 
-- `nohitdelay.manage` — Access to all subcommands (default: OP).
+2. Choose a mode:
 
-## Modes
+   `/nohitdelay setmode pvp` (or `evp`, `pvp-evp`, `any`, `player-only`)
 
-- `pvp` — Player vs Player only.
-- `evp` — Entities vs Player only.
-- `pvp-evp` — Any interaction where a player is involved.
-- `any` — Any entity interactions.
-- `player-only` — Player damages any entity; entities do not gain no-hit delay when damaging.
+3. Optional: tweak knockback in `config.yml`.
 
 ## Configuration
 
@@ -89,34 +116,58 @@ messages:
 
 Notes:
 
-- Hex colors in messages using `&#RRGGBB` are converted where supported (1.16+).
-- On legacy 1.8 servers, only `&` color codes render.
+* Hex colors `&#RRGGBB` are converted on 1.16+.
 
-## Building
+## Commands & Permissions
 
-- Prereqs: JDK 8+ and Maven.
-- Build: `mvn -DskipTests package`
-- Output: `target/NoHitDelay-<version>.jar`
+**Commands**
 
-CI:
+* `/nohitdelay` — Help
+* `/nohitdelay setdelay <ticks>` — Set invulnerability ticks
+* `/nohitdelay getdelay` — Show current delay
+* `/nohitdelay setmode <mode>` — Set mode
+* `/nohitdelay getmode` — Show current mode
+* `/nohitdelay reloadconfig` — Reload configuration
 
-- GitHub Actions builds on each push and uploads the JAR as an artifact.
-- Tagging `vX.Y.Z` creates a GitHub Release and attaches the built JAR.
+**Permission**
 
-## Versioning
+* `nohitdelay.manage` — Access to all subcommands (default: OP)
 
-This project follows Semantic Versioning:
+## How It Works
 
-- MAJOR: incompatible changes (e.g., config format changes, dropped MC version).
-- MINOR: new features, compatible changes.
-- PATCH: bug fixes only.
+The plugin listens for damage events and briefly schedules an update to the damaged entity:
 
-Current release: `1.3.0`.
+1. Optionally scales knockback by a configurable multiplier.
+2. Sets the entity’s `noDamageTicks` to the configured value.
 
-## Changelog
+On Folia, tasks run on the entity’s region scheduler. On Spigot/Paper, they run on the Bukkit scheduler.
 
-See `CHANGELOG.md` for a human-readable list of changes per release.
+## Troubleshooting & FAQ
 
-## License
+**Does this remove the 1.9+ attack cooldown?**
 
-MIT — see `LICENSE`.
+No. This controls entity invulnerability (`noDamageTicks`). The 1.9+ attack cooldown is a separate mechanic.
+
+**No change in-game?**
+
+Check that your mode matches the situation (e.g., `pvp` vs `any`). Other plugins may modify velocity or damage behavior.
+
+**Knockback multiplier seems subtle.**
+
+It scales the entity’s current velocity on the next tick. Some servers or plugins clamp or alter knockback.
+
+## Building from Source
+
+Requirements: JDK 8+, Maven.
+
+```bash
+mvn -DskipTests package
+```
+
+The jar is produced under `target/`.
+
+## Contributing & License
+
+Issues and PRs are welcome: https://github.com/NewAmazingPVP/NoHitDelay/issues
+
+License: MIT — see `LICENSE`.
