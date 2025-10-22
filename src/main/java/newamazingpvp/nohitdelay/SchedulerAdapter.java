@@ -64,11 +64,26 @@ public final class SchedulerAdapter {
         try {
             Object scheduler = getEntityScheduler(entity);
 
+            Method runDelayedConsumerRetired = findMethod(scheduler.getClass(), "runDelayed",
+                    new Class<?>[]{Plugin.class, Consumer.class, Runnable.class, long.class});
+            if (runDelayedConsumerRetired != null) {
+                Consumer<Object> consumer = ignored -> task.run();
+                runDelayedConsumerRetired.invoke(scheduler, plugin, consumer, null, delay);
+                return true;
+            }
+
             Method runDelayedConsumer = findMethod(scheduler.getClass(), "runDelayed",
                     new Class<?>[]{Plugin.class, Consumer.class, long.class});
             if (runDelayedConsumer != null) {
                 Consumer<Object> consumer = ignored -> task.run();
                 runDelayedConsumer.invoke(scheduler, plugin, consumer, delay);
+                return true;
+            }
+
+            Method runDelayedRunnableRetired = findMethod(scheduler.getClass(), "runDelayed",
+                    new Class<?>[]{Plugin.class, Runnable.class, Runnable.class, long.class});
+            if (runDelayedRunnableRetired != null) {
+                runDelayedRunnableRetired.invoke(scheduler, plugin, task, null, delay);
                 return true;
             }
 
@@ -209,6 +224,13 @@ public final class SchedulerAdapter {
         try {
             Object scheduler = getEntityScheduler(entity);
 
+            Method runConsumerRetired = findMethod(scheduler.getClass(), "run",
+                    new Class<?>[]{Plugin.class, Consumer.class, Runnable.class});
+            if (runConsumerRetired != null) {
+                runConsumerRetired.invoke(scheduler, plugin, (Consumer<Object>) ignored -> task.run(), null);
+                return true;
+            }
+
             Method runConsumer = findMethod(scheduler.getClass(), "run",
                     new Class<?>[]{Plugin.class, Consumer.class});
             if (runConsumer != null) {
@@ -216,10 +238,24 @@ public final class SchedulerAdapter {
                 return true;
             }
 
+            Method runRunnableRetired = findMethod(scheduler.getClass(), "run",
+                    new Class<?>[]{Plugin.class, Runnable.class, Runnable.class});
+            if (runRunnableRetired != null) {
+                runRunnableRetired.invoke(scheduler, plugin, task, null);
+                return true;
+            }
+
             Method runRunnable = findMethod(scheduler.getClass(), "run",
                     new Class<?>[]{Plugin.class, Runnable.class});
             if (runRunnable != null) {
                 runRunnable.invoke(scheduler, plugin, task);
+                return true;
+            }
+
+            Method executeRetired = findMethod(scheduler.getClass(), "execute",
+                    new Class<?>[]{Plugin.class, Runnable.class, Runnable.class, long.class});
+            if (executeRetired != null) {
+                executeRetired.invoke(scheduler, plugin, task, null, 1L);
                 return true;
             }
 
