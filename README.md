@@ -1,10 +1,9 @@
 <div align="center">
 
-# **NoHitDelay v1.3.0**
+# **NoHitDelay v1.3.1**
 
 *Customize the no-damage tick window for responsive combat.*
 
-[![SpigotMC](https://img.shields.io/badge/SpigotMC-Resource-orange)](https://www.spigotmc.org/resources/customizablenohitdelay.109763/)
 ![Platforms](https://img.shields.io/badge/Platforms-Spigot%20%7C%20Paper%20%7C%20Folia-5A67D8)
 ![MC](https://img.shields.io/badge/Minecraft-1.8%E2%86%92Latest-2EA043)
 ![Java](https://img.shields.io/badge/Java-8%2B-1F6FEB)
@@ -13,7 +12,8 @@
 </div>
 
 > TL;DR
-> Drop in the jar → set `delay` → choose a mode. The plugin adjusts entity invulnerability (no-damage ticks) safely on modern servers and Folia.
+> Drop in the jar → set `delay` → choose a mode. The plugin adjusts entity invulnerability (no-damage ticks) safely on
+> modern servers and Folia.
 
 ---
 
@@ -56,7 +56,8 @@
 
 ## Installation
 
-1. Download the latest `.jar` from [Spigot](https://www.spigotmc.org/resources/customizablenohitdelay.109763/) or GitHub Releases.
+1. Download the latest `.jar` from [Spigot](https://www.spigotmc.org/resources/customizablenohitdelay.109763/) or GitHub
+   Releases.
 2. Place it into your server’s `plugins/` directory.
 3. Start the server to generate `config.yml`.
 
@@ -122,16 +123,16 @@ Notes:
 
 **Commands**
 
-* `/nohitdelay` — Help
-* `/nohitdelay setdelay <ticks>` — Set invulnerability ticks
-* `/nohitdelay getdelay` — Show current delay
-* `/nohitdelay setmode <mode>` — Set mode
-* `/nohitdelay getmode` — Show current mode
-* `/nohitdelay reloadconfig` — Reload configuration
+* `/nohitdelay` - Help
+* `/nohitdelay setdelay <ticks>` - Set invulnerability ticks
+* `/nohitdelay getdelay` - Show current delay
+* `/nohitdelay setmode <mode>` - Set mode
+* `/nohitdelay getmode` - Show current mode
+* `/nohitdelay reloadconfig` - Reload configuration
 
 **Permission**
 
-* `nohitdelay.manage` — Access to all subcommands (default: OP)
+* `nohitdelay.manage` - Access to all subcommands (default: OP)
 
 ## How It Works
 
@@ -170,4 +171,4 @@ The jar is produced under `target/`.
 
 Issues and PRs are welcome: https://github.com/NewAmazingPVP/NoHitDelay/issues
 
-License: MIT — see `LICENSE`.
+License: MIT - see `LICENSE`.
