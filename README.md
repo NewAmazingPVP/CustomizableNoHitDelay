@@ -1,6 +1,6 @@
 <div align="center">
 
-# **NoHitDelay v1.3.1**
+# **NoHitDelay v1.4.0**
 
 *Customize the no-damage tick window for responsive combat.*
 
@@ -35,7 +35,9 @@
 ## Highlights
 
 * Set entity invulnerability ticks (no-damage ticks) to your preference.
-* Five modes: `pvp`, `evp`, `pvp-evp`, `any`, `player-only`.
+* Nine modes: `pvp`, `evp`, `pvp-evp`, `any`, `player-only`, `crystal`, `anchor`, `crystal-anchor`, `custom`.
+* Crystal PvP support for end crystals and respawn anchors.
+* Custom entity and block target lists for server-specific combat setups.
 * Optional knockback multiplier.
 * Safe on Folia via region scheduling (no cross-thread access).
 * Works back to 1.8; Java 8 compatible.
@@ -69,7 +71,7 @@
 
 2. Choose a mode:
 
-   `/nohitdelay setmode pvp` (or `evp`, `pvp-evp`, `any`, `player-only`)
+   `/nohitdelay setmode pvp` (or `evp`, `pvp-evp`, `any`, `player-only`, `crystal`, `anchor`, `crystal-anchor`, `custom`)
 
 3. Optional: tweak knockback in `config.yml`.
 
@@ -91,7 +93,20 @@ knockback-multiplier: 1.0 # Set to 1.0 to disable knockback changes
 # pvp-evp - No hit delay applies to both PvP and EvP interactions as long as a player is involved.
 # any - No hit delay applies to any entity interactions.
 # player-only - No hit delay applies when players attack any entity, but entities do not have no hit delay when attacking.
+# crystal - No hit delay applies only to end crystal explosion damage.
+# anchor - No hit delay applies only to respawn anchor explosion damage.
+# crystal-anchor - No hit delay applies to end crystal and respawn anchor explosion damage.
+# custom - No hit delay applies only when the damaging entity or block is listed in custom-targets.
 mode: any
+
+custom-targets:
+  # EntityType or Material names are accepted. Names are case-insensitive, and minecraft: namespaces are allowed.
+  entities:
+    - ENDER_CRYSTAL
+  blocks:
+    - RESPAWN_ANCHOR
+  # When true, custom mode ignores matching targets unless the damage cause is an explosion.
+  explosions-only: false
 
 messages:
   prefix: "&f[NoHitDelay] "
@@ -101,7 +116,7 @@ messages:
   usage-setdelay: "&cUsage: /nohitdelay setdelay <delay>"
   current-delay: "&aDelay is currently set to: &e%value%"
   mode-set: "&aMode set to: &e%value%&a."
-  invalid-mode: "&cInvalid mode value. Please use 'pvp', 'evp', 'pvp-evp', 'any', or 'player-only'."
+  invalid-mode: "&cInvalid mode value. Please use: &e%modes%&c."
   usage-setmode: "&cUsage: /nohitdelay setmode <mode>"
   current-mode: "&aMode is currently set to: &e%value%"
   config-reloaded: "&aConfiguration reloaded."
@@ -111,6 +126,7 @@ messages:
     - "&f/nohitdelay setdelay <amount> &7(~~~)"
     - "&f/nohitdelay getdelay &7(~~~)"
     - "&f/nohitdelay setmode <mode> &7(~~~)"
+    - "&7Modes: pvp, evp, pvp-evp, any, player-only, crystal, anchor, crystal-anchor, custom"
     - "&f/nohitdelay getmode &7(~~~)"
     - "&f/nohitdelay reloadconfig &7(~~~)"
 ```
@@ -118,6 +134,8 @@ messages:
 Notes:
 
 * Hex colors `&#RRGGBB` are converted on 1.16+.
+* Use `crystal-anchor` for crystal PvP servers that want only end crystal and respawn anchor explosion damage to use the configured hit delay.
+* Use `custom` when you want a specific list of Bukkit `EntityType` or `Material` names. Values such as `ENDER_CRYSTAL`, `minecraft:respawn_anchor`, and `respawn-anchor` are accepted.
 
 ## Commands & Permissions
 

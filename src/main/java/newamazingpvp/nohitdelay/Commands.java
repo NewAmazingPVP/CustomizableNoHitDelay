@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -54,13 +55,16 @@ public class Commands implements CommandExecutor, TabCompleter {
                         break;
                     case "setmode":
                         if (args.length == 2) {
-                            String mode = args[1].toLowerCase();
-                            if (Arrays.asList("pvp", "evp", "pvp-evp", "any", "player-only").contains(mode)) {
+                            String mode = DamageRules.normalizeModeName(args[1]);
+                            if (DamageRules.isValidMode(mode)) {
                                 config.getConfig().set("mode", mode);
                                 plugin.saveConfig();
                                 player.sendMessage(formatMessage(usePrefix, prefix, config.getConfig().getString("messages.mode-set", "&aMode set to: &e%value%&a."), mode));
                             } else {
-                                player.sendMessage(formatMessage(usePrefix, prefix, config.getConfig().getString("messages.invalid-mode", "&cInvalid mode value. Please use 'pvp', 'evp', 'pvp-evp', 'any', or 'player-only'.")));
+                                String invalidModeMessage = config.getConfig()
+                                        .getString("messages.invalid-mode", "&cInvalid mode value. Please use: &e%modes%&c.")
+                                        .replace("%modes%", DamageRules.getModesText());
+                                player.sendMessage(formatMessage(usePrefix, prefix, invalidModeMessage));
                             }
                         } else {
                             player.sendMessage(formatMessage(usePrefix, prefix, config.getConfig().getString("messages.usage-setmode", "&cUsage: /nohitdelay setmode <mode>")));
@@ -118,12 +122,12 @@ public class Commands implements CommandExecutor, TabCompleter {
             if (args.length == 1) {
                 return Arrays.asList("setdelay", "getdelay", "setmode", "getmode", "reloadconfig")
                         .stream()
-                        .filter(subcommand -> subcommand.startsWith(args[0].toLowerCase()))
+                        .filter(subcommand -> subcommand.startsWith(args[0].toLowerCase(Locale.ROOT)))
                         .collect(Collectors.toList());
             } else if (args.length == 2 && args[0].equalsIgnoreCase("setmode")) {
-                return Arrays.asList("pvp", "evp", "pvp-evp", "any", "player-only")
+                return DamageRules.getModes()
                         .stream()
-                        .filter(mode -> mode.startsWith(args[1].toLowerCase()))
+                        .filter(mode -> mode.startsWith(args[1].toLowerCase(Locale.ROOT)))
                         .collect(Collectors.toList());
             }
         }
